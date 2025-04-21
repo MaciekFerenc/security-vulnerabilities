@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista zgłoszeń</title>
+</head>
+<body>
+<h1>Lista zgłoszeń</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Opis</th>
+        <th>Załącznik</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.description}"></td>
+        <td>
+            <span th:if="${ticket.attachmentName != null}">
+                <a th:href="@{/files(filename=${ticket.id + '/' + ticket.attachmentName})}" target="_blank">Pobierz</a>
+            </span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<a href="/form.html">Utwórz nowe zgłoszenie</a>
+</body>
+</html>
