@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista zgłoszeń</title>
+</head>
+<body>
+<h1>Lista zgłoszeń</h1>
+<ul>
+    <li th:each="ticket : ${tickets}">
+        <strong>Opis:</strong>
+        <p th:utext="${ticket.description}"></p>
+    </li>
+</ul>
+<a href="/form.html">Utwórz nowe zgłoszenie</a>
+</body>
+</html>
