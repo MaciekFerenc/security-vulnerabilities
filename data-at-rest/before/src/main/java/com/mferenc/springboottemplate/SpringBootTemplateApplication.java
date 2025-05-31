@@ -7,11 +7,10 @@ import com.mferenc.springboottemplate.tickets.TicketRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -23,9 +22,12 @@ public class SpringBootTemplateApplication {
 
     private final TicketRepository ticketRepository;
 
-    public SpringBootTemplateApplication(UserRepository userRepository, TicketRepository ticketRepository) {
+    private final PasswordEncoder passwordEncoder;
+
+    public SpringBootTemplateApplication(UserRepository userRepository, TicketRepository ticketRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public static void main(String[] args) {
@@ -41,8 +43,8 @@ public class SpringBootTemplateApplication {
     }
 
     private void createDefaultUsers() {
-        User user1 = new User("user1", "haslo");
-        User user2 = new User("user2", "haslo");
+        User user1 = new User("user1", passwordEncoder.encode("haslo"));
+        User user2 = new User("user2", passwordEncoder.encode("haslo"));
         userRepository.save(user1);
         userRepository.save(user2);
     }

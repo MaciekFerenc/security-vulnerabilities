@@ -2,13 +2,14 @@ package com.mferenc.springboottemplate.auth;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,28 +27,32 @@ public class AuthController {
 
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
 
+    private final PasswordEncoder passwordEncoder;
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository) {
+    public AuthController(AuthenticationManager authenticationManager,
+                          UserRepository userRepository,
+                          PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest,
                                         HttpServletRequest request) {
 
-        User user = userRepository
-                .findByUsernameAndPassword(loginRequest.username(), loginRequest.password())
+        User user = userRepository.findByUsername(loginRequest.username())
                 .orElse(null);
 
-        if (user == null) {
+        if (user == null || !passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
 
         UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+                new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.password());
         Authentication auth = authenticationManager.authenticate(token);
 
         SecurityContextHolder.getContext().setAuthentication(auth);
@@ -56,4 +60,20 @@ public class AuthController {
 
         return ResponseEntity.ok("Login successful");
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
+        if (userRepository.findByUsername(registerUserRequest.username()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is taken");
+        }
+
+        User user = new User();
+        user.setUsername(registerUserRequest.username());
+        String encodePassword = passwordEncoder.encode(registerUserRequest.password());
+        user.setPassword(encodePassword);
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Registration successful");
+    }
+
 }
