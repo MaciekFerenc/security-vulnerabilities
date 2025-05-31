@@ -32,4 +32,17 @@ public class UserController {
 
         return ResponseEntity.ok("User details updated successfully.");
     }
+
+    @GetMapping("/details")
+    public ResponseEntity<AccountDetails> getUserDetails() {
+        User user = auth.getCurrentUser();
+
+        AccountDetails details = new AccountDetails(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPesel()
+        );
+        return ResponseEntity.ok(details);
+    }
 }
