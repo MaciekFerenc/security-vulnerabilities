@@ -51,7 +51,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/login*").permitAll()
+                        .requestMatchers("auth/login*").permitAll()
+                        .requestMatchers("/auth/register").permitAll()
+                        .requestMatchers("/auth/register*").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(login -> login.defaultSuccessUrl("/tickets"))
                 .sessionManagement(session -> session

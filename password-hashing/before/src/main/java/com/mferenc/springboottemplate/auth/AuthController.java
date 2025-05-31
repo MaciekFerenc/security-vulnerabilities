@@ -2,8 +2,8 @@ package com.mferenc.springboottemplate.auth;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -56,4 +55,19 @@ public class AuthController {
 
         return ResponseEntity.ok("Login successful");
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
+        if (userRepository.findByUsername(registerUserRequest.username()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is taken");
+        }
+
+        User user = new User();
+        user.setUsername(registerUserRequest.username());
+        user.setPassword(registerUserRequest.password());
+        userRepository.save(user);
+
+        return ResponseEntity.ok("Registration successful");
+    }
+
 }
