@@ -52,7 +52,7 @@ public class AuthController {
         }
 
         UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword());
+                new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.password());
         Authentication auth = authenticationManager.authenticate(token);
 
         SecurityContextHolder.getContext().setAuthentication(auth);
