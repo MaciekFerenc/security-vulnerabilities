@@ -22,22 +22,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
-
     private final SecurityContextRepository securityContextRepository = new HttpSessionSecurityContextRepository();
-
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("/login")
@@ -76,4 +75,18 @@ public class AuthController {
         return ResponseEntity.ok("Registration successful");
     }
 
+
+    @PostMapping("/jwt-login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        User user = userRepository.findByUsername(request.username()).orElse(null);
+        if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
+
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(user.getUsername(), request.password()));
+
+        String token = jwtService.generateToken(user.getUsername());
+        return ResponseEntity.ok(token);
+    }
 }

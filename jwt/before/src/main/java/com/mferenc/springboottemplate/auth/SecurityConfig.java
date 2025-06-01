@@ -7,22 +7,20 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
 
 @Configuration
 public class SecurityConfig {
-
-    @Autowired
-    private DataSource dataSource;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -48,18 +46,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/auth/login").permitAll()
+                        .requestMatchers("/auth/jwt-login").permitAll()
                         .requestMatchers("/login*").permitAll()
                         .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(login -> login.defaultSuccessUrl("/tickets"))
-                .sessionManagement(session -> session
-                        .sessionFixation().migrateSession()
-                        .maximumSessions(1));
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//                .sessionManagement(session -> session
+//                        .sessionFixation().migrateSession()
+//                        .maximumSessions(1));
 
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthFilter jwtAuthFilter(JwtService jwtService,
+                                       AuthenticationManager authenticationManager,
+                                       UserDetailsService userDetailsService
+    ) {
+        return new JwtAuthFilter(jwtService, userDetailsService);
     }
 }
