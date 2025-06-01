@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista zgłoszeń (admin)</title>
+</head>
+<body>
+<h1>Lista wszystkich zgłoszeń</h1>
+<table border="1">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Opis</th>
+        <th>Załącznik</th>
+        <th>Akcje</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.id}"></td>
+        <td th:text="${ticket.description}"></td>
+        <td>
+            <span th:if="${ticket.attachmentName != null}">
+                <a th:href="@{/files(filename=${ticket.id + '/' + ticket.attachmentName})}" target="_blank">Pobierz</a>
+            </span>
+        </td>
+        <td>
+            <form th:action="@{/admin/tickets/{id}(id=${ticket.id})}" method="post" th:object="${ticket}">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" th:if="${isAdmin}" onclick="setTimeout(() => window.location.reload(), 100)">Usuń</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
