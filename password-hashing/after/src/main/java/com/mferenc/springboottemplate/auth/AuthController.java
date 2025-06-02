@@ -47,32 +47,41 @@ public class AuthController {
         User user = userRepository.findByUsername(loginRequest.username())
                 .orElse(null);
 
-        if (user == null || !passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
+        if (user == null ||
+            !passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
-
         UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(user.getUsername(), loginRequest.password());
+                new UsernamePasswordAuthenticationToken(
+                        user.getUsername(), loginRequest.password()
+                );
         Authentication auth = authenticationManager.authenticate(token);
 
         SecurityContextHolder.getContext().setAuthentication(auth);
-        securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, null);
-
+        securityContextRepository.saveContext(
+                SecurityContextHolder.getContext(),
+                request,
+                null);
         return ResponseEntity.ok("Login successful");
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
-        if (userRepository.findByUsername(registerUserRequest.username()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is taken");
+    public ResponseEntity<String> registerUser(
+            @RequestBody RegisterUserRequest registerUserRequest) {
+        boolean usernameTaken = userRepository
+                .findByUsername(registerUserRequest.username())
+                .isPresent();
+        if (usernameTaken) {
+            return ResponseEntity.
+                    status(HttpStatus.BAD_REQUEST)
+                    .body("Username is taken");
         }
-
         User user = new User();
         user.setUsername(registerUserRequest.username());
-        String encodePassword = passwordEncoder.encode(registerUserRequest.password());
-        user.setPassword(encodePassword);
+        String encodedPassword =
+                passwordEncoder.encode(registerUserRequest.password());
+        user.setPassword(encodedPassword);
         userRepository.save(user);
-
         return ResponseEntity.ok("Registration successful");
     }
 

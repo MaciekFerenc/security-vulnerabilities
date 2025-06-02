@@ -57,17 +57,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody RegisterUserRequest registerUserRequest) {
-        if (userRepository.findByUsername(registerUserRequest.username()).isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is taken");
+    public ResponseEntity<String> registerUser(
+            @RequestBody RegisterUserRequest registerUserRequest) {
+        boolean usernameTaken = userRepository
+                .findByUsername(registerUserRequest.username())
+                .isPresent();
+        if (usernameTaken) {
+            return ResponseEntity.
+                    status(HttpStatus.BAD_REQUEST)
+                    .body("Username is taken");
         }
-
         User user = new User();
         user.setUsername(registerUserRequest.username());
         user.setPassword(registerUserRequest.password());
         userRepository.save(user);
-
         return ResponseEntity.ok("Registration successful");
     }
-
 }

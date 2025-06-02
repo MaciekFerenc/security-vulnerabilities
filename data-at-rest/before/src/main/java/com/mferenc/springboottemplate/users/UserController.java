@@ -21,15 +21,13 @@ public class UserController {
 
     @PostMapping("/details")
     @Transactional
-    public ResponseEntity<String> updateUserDetails(@RequestBody UpdateAccountDetailsRequest request) {
+    public ResponseEntity<String> updateUserDetails(
+            @RequestBody UpdateAccountDetailsRequest request) {
         User user = auth.getCurrentUser();
-
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setPesel(request.pesel());
-
         userRepository.save(user);
-
         return ResponseEntity.ok("User details updated successfully.");
     }
 
