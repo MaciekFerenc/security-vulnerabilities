@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class JwtService {
-
     private static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_MS = TimeUnit.MINUTES.toMillis(15);
 

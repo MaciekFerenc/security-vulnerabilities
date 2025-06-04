@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -19,10 +20,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
-    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+
+    public JwtAuthFilter(JwtService jwtService, UserDetailsService userDetailsService, HandlerExceptionResolver handlerExceptionResolver) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -44,6 +48,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
                 log.error(e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+                handlerExceptionResolver.resolveException(request, response, null, e);
+                return;
             }
         }
         filterChain.doFilter(request, response);

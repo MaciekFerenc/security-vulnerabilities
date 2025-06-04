@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/login*").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .formLogin(login -> login.defaultSuccessUrl("/tickets"))
+//                .formLogin(login -> login.defaultSuccessUrl("/tickets"))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //                .sessionManagement(session -> session
 //                        .sessionFixation().migrateSession()
@@ -67,8 +68,10 @@ public class SecurityConfig {
     @Bean
     public JwtAuthFilter jwtAuthFilter(JwtService jwtService,
                                        AuthenticationManager authenticationManager,
-                                       UserDetailsService userDetailsService
+                                       UserDetailsService userDetailsService,
+                                       HandlerExceptionResolver handlerExceptionResolver
     ) {
-        return new JwtAuthFilter(jwtService, userDetailsService);
+        return new JwtAuthFilter(jwtService, userDetailsService, handlerExceptionResolver);
     }
 }
+

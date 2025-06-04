@@ -11,9 +11,13 @@ import java.security.Key;
 
 @Component
 public class JwtService {
-
     private static final Key SECRET_KEY =
-            Keys.hmacShaKeyFor("12345678901234567890123456789012".getBytes(StandardCharsets.UTF_8));
+            Keys.secretKeyFor(SignatureAlgorithm.HS256);
+//    private static final Key SECRET_KEY =
+//            Keys.hmacShaKeyFor(
+//                    "12345678901234567890123456789012"
+//                            .getBytes(StandardCharsets.UTF_8)
+//            );
 
     public String generateToken(String username) {
         return Jwts.builder()
