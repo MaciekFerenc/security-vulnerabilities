@@ -83,19 +83,23 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<PasswordResetResponse> forgotPassword(@RequestBody ForgotPasswordRequest resetRequest) {
+    public ResponseEntity<PasswordResetResponse> forgotPassword(
+            @RequestBody ForgotPasswordRequest resetRequest)
+    {
         randomDelay(200, 700);
-        String successMessage = "Password reset token was sent to given email address";
 
-        User user = userRepository.findByEmail(resetRequest.email()).orElse(null);
-
+        User user = userRepository
+                .findByEmail(resetRequest.email())
+                .orElse(null);
         if (user != null) {
             String resetToken = user.generateResetToken();
             userRepository.save(user);
             mailSenderService.sendForgotPasswordEmail(user.getEmail(), resetToken);
         }
 
-        var response = new PasswordResetResponse(true, successMessage);
+        var response = new PasswordResetResponse(
+                true,
+                "Password reset token was sent to given email address");
         return ResponseEntity.ok(response);
     }
 

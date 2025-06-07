@@ -85,10 +85,12 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<PasswordResetResponse> forgotPassword(@RequestBody ForgotPasswordRequest resetRequest) {
-
-        User user = userRepository.findByEmail(resetRequest.email()).orElse(null);
-
+    public ResponseEntity<PasswordResetResponse> forgotPassword(
+            @RequestBody ForgotPasswordRequest resetRequest)
+    {
+        User user = userRepository
+                .findByEmail(resetRequest.email())
+                .orElse(null);
         if (user == null) {
             return ResponseEntity.status(404)
                     .body(new PasswordResetResponse(false, "User not found"));
@@ -96,7 +98,6 @@ public class AuthController {
 
         String resetToken = user.generateResetToken();
         userRepository.save(user);
-
         mailSenderService.sendForgotPasswordEmail(user.getEmail(), resetToken);
 
         var response = new PasswordResetResponse(
@@ -107,7 +108,9 @@ public class AuthController {
 
     @PostMapping("/reset-password")
     public ResponseEntity<PasswordResetResponse> resetPassword(@RequestBody PasswordResetRequest resetRequest) {
-        User user = userRepository.findByPasswordResetToken(resetRequest.token()).orElse(null);
+        User user = userRepository
+                .findByPasswordResetToken(resetRequest.token())
+                .orElse(null);
 
         if (user == null) {
             return ResponseEntity.status(404)
