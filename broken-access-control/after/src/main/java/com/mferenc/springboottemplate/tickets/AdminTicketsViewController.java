@@ -2,6 +2,7 @@ package com.mferenc.springboottemplate.tickets;
 
 import com.mferenc.springboottemplate.auth.AuthenticationFacade;
 import com.mferenc.springboottemplate.auth.User;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,7 +46,7 @@ public class AdminTicketsViewController {
         Ticket ticket = ticketOpt.get();
         User currentUser = auth.getCurrentUser();
         if (currentUser.getRole() != User.Role.ADMIN) {
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         ticketRepository.delete(ticket);
         return ResponseEntity.noContent().build();
