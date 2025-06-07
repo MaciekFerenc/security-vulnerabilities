@@ -29,15 +29,18 @@ public class AuthController {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final PasswordValidator passwordValidator;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     public AuthController(AuthenticationManager authenticationManager,
                           UserRepository userRepository,
-                          PasswordEncoder passwordEncoder) {
+                          PasswordEncoder passwordEncoder, PasswordValidator passwordValidator) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.passwordValidator = passwordValidator;
     }
 
     @PostMapping("/login")
@@ -76,6 +79,14 @@ public class AuthController {
                     status(HttpStatus.BAD_REQUEST)
                     .body("Username is taken");
         }
+        var result = passwordValidator.
+                validatePassword(registerUserRequest.password());
+        if (!result.isSuccess()) {
+            return ResponseEntity.
+                    status(HttpStatus.BAD_REQUEST)
+                    .body(result.errorMessage());
+        }
+
         User user = new User();
         user.setUsername(registerUserRequest.username());
         String encodedPassword =

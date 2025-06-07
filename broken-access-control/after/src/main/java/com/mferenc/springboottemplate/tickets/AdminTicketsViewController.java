@@ -46,7 +46,7 @@ public class AdminTicketsViewController {
         Ticket ticket = ticketOpt.get();
         User currentUser = auth.getCurrentUser();
         if (currentUser.getRole() != User.Role.ADMIN) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            return ResponseEntity.notFound().build();
         }
         ticketRepository.delete(ticket);
         return ResponseEntity.noContent().build();
