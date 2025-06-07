@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminTicketsViewController {
 
     private final TicketRepository ticketRepository;
@@ -25,7 +24,7 @@ public class AdminTicketsViewController {
         this.auth = auth;
     }
 
-    @GetMapping("/tickets")
+    @GetMapping("/admin/tickets")
     public String showAllTickets(Model model) {
         User user = auth.getCurrentUser();
         if (user.getRole() != User.Role.ADMIN) {
@@ -37,7 +36,7 @@ public class AdminTicketsViewController {
         return "admin-tickets";
     }
 
-    @PostMapping("/tickets/{id}")
+    @PostMapping("/admin/tickets/{id}")
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         ticketRepository.deleteById(id);
         return ResponseEntity.noContent().build();
