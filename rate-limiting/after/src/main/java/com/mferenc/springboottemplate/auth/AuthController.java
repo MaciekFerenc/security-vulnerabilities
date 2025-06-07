@@ -44,10 +44,14 @@ public class AuthController {
         String username = loginRequest.username();
 
         if (loginAttemptService.isIpBlocked(clientIp)) {
-            return ResponseEntity.status(429).body("Too many attempts. Try again later");
+            return ResponseEntity
+                    .status(429)
+                    .body("Too many attempts. Try again later");
         }
         if (loginAttemptService.isUsernameBlocked(username)) {
-            return ResponseEntity.status(429).body("Too many attempts. Try again later.");
+            return ResponseEntity
+                    .status(429)
+                    .body("Too many attempts. Try again later.");
         }
 
         User user = userRepository.findByUsername(loginRequest.username())
