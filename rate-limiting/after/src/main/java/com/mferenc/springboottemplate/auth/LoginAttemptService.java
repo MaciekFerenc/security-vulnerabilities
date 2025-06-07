@@ -11,7 +11,7 @@ public class LoginAttemptService {
 
     private static final int MAX_ATTEMPTS_PER_IP = 5;
     private static final int MAX_ATTEMPTS_PER_USERNAME = 10;
-    private static final long LOCK_TIME_MS = TimeUnit.MINUTES.toMillis(1);
+    private static final long LOCK_TIME_MS = TimeUnit.MINUTES.toMillis(15);
 
     private final ConcurrentHashMap<String, AttemptsInfo> ipAttempts = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, AttemptsInfo> usernameAttempts = new ConcurrentHashMap<>();
