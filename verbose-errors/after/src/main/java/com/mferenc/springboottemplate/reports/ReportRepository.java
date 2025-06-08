@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
-    Optional<Report> findTopByOrderByCreatedAtDesc();
+    Report findTopByOrderByCreatedAtDesc();
 
     @Query(value = "SELECT * FROM reports WHERE author = :authorId", nativeQuery = true)
     List<Report> findByAuthorId(@Param("authorId") long authorId);

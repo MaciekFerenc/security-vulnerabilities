@@ -16,11 +16,11 @@ public class ReportController {
     }
 
     @GetMapping("/latest-description")
-    public ResponseEntity<String> getLatestReportDescription() {
-        var reportOpt = reportRepository.findTopByOrderByCreatedAtDesc();
-        return reportOpt.map(report -> new ResponseEntity<>(
-                report.getDescription().toUpperCase(),
-                HttpStatus.OK)).orElseGet(() -> ResponseEntity.notFound().build());
+    public String getLatestReportDescription() {
+        return reportRepository.
+                findTopByOrderByCreatedAtDesc()
+                .getDescription()
+                .toUpperCase();
     }
 
     @GetMapping("/authors/{authorId}")
