@@ -50,7 +50,7 @@ public class TicketsViewController {
     }
 
     @GetMapping("/tickets-html")
-    public void showTickets_PlainHtml(HttpServletResponse response) throws IOException {
+    public void showTicketsPlainHtml(HttpServletResponse response) throws IOException {
         long currentUserId = auth.getCurrentUser().getId();
         List<Ticket> tickets = ticketRepository.findByUserId(currentUserId);
 

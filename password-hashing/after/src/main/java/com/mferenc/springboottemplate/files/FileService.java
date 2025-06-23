@@ -33,10 +33,10 @@ public class FileService {
             if (resource.exists() && resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("File not found or not readable");
+                throw new FileErrorException("File not found or not readable");
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Invalid file path", e);
+            throw new FileErrorException("Invalid file path");
         }
     }
 
@@ -57,7 +57,14 @@ public class FileService {
             Path targetPath = directory.resolve(file.getOriginalFilename()).normalize();
             Files.copy(file.getInputStream(), targetPath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new RuntimeException("Błąd podczas zapisywania pliku", e);
+            throw new FileErrorException("Błąd podczas zapisywania pliku");
         }
+    }
+}
+
+
+class FileErrorException extends RuntimeException {
+    public FileErrorException(String message) {
+        super(message);
     }
 }

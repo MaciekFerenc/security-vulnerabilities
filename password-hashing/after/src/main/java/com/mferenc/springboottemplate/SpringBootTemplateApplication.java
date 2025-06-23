@@ -1,6 +1,5 @@
 package com.mferenc.springboottemplate;
 
-import com.mferenc.springboottemplate.auth.User;
 import com.mferenc.springboottemplate.auth.UserRepository;
 import com.mferenc.springboottemplate.tickets.Ticket;
 import com.mferenc.springboottemplate.tickets.TicketRepository;
@@ -9,8 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
@@ -22,12 +19,10 @@ public class SpringBootTemplateApplication {
 
     private final TicketRepository ticketRepository;
 
-    private final PasswordEncoder passwordEncoder;
 
-    public SpringBootTemplateApplication(UserRepository userRepository, TicketRepository ticketRepository, PasswordEncoder passwordEncoder) {
+    public SpringBootTemplateApplication(UserRepository userRepository, TicketRepository ticketRepository) {
         this.userRepository = userRepository;
         this.ticketRepository = ticketRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     public static void main(String[] args) {
@@ -37,16 +32,8 @@ public class SpringBootTemplateApplication {
     @EventListener(ApplicationReadyEvent.class)
     public void insertData() {
         if (userRepository.count() == 0 && ticketRepository.count() == 0) {
-            createDefaultUsers();
             createSampleTicketData();
         }
-    }
-
-    private void createDefaultUsers() {
-        User user1 = new User("user1", passwordEncoder.encode("haslo"));
-        User user2 = new User("user2", passwordEncoder.encode("haslo"));
-        userRepository.save(user1);
-        userRepository.save(user2);
     }
 
     private void createSampleTicketData() {

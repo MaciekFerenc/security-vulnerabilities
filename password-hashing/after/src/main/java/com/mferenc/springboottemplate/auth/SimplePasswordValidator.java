@@ -10,7 +10,7 @@ public class SimplePasswordValidator implements PasswordValidator {
     private static final int MIN_DIGITS = 1;
 
     private static final Pattern SPECIAL_CHARS_PATTERN = Pattern.compile("[^a-zA-Z0-9]");
-    private static final Pattern DIGITS_PATTERN = Pattern.compile("[0-9]");
+    private static final Pattern DIGITS_PATTERN = Pattern.compile("\\d");
 
     @Override
     public PasswordValidationResult validatePassword(String password) {
