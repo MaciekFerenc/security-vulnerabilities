@@ -16,7 +16,6 @@ public class User {
     private String firstName;
     private String lastName;
     private String pesel;
-    @Column(unique = true, nullable = false)
     private String email;
     private String passwordResetToken;
     private LocalDateTime passwordResetTokenExpiry;
