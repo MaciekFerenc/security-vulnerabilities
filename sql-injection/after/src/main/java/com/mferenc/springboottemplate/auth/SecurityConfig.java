@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(form -> form.disable())
+                .formLogin(login -> login.disable())
                 .sessionManagement(session -> session
                         .sessionFixation().migrateSession()
                         .maximumSessions(1));

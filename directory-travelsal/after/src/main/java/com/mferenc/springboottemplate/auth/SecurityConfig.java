@@ -53,7 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/login*").permitAll()
                         .anyRequest().authenticated())
-                .formLogin(login -> login.defaultSuccessUrl("/tickets"))
+                .formLogin(login -> login.defaultSuccessUrl("/tickets", true))
                 .sessionManagement(session -> session
                         .sessionFixation().migrateSession()
                         .maximumSessions(1));
