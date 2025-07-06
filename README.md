@@ -19,3 +19,13 @@ To run any application go to correct directory (for example `./sql-injection/bef
 ```
 
 This will start the Postgres dockesr container and start the application (default port: 8080).
+
+
+
+
+# Docker 
+
+You can also run demo applications as docker containers. Navigate to correct directory and run:
+```bash
+docker-compose up --build
+```
