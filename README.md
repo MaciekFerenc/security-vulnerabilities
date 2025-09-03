@@ -10,17 +10,15 @@ Examples of vulnerable applications and ways to make them secure
 
 
 Each directory contains 2 demo applications: 
-one with vulnerable code (directory: `before`) 
-and one with vulnerability patched (directory: `after`)
+one with vulnerable code (directory: `vulnerable`) 
+and one with vulnerability patched (directory: `fixed`)
 
-To run any application go to correct directory (for example `./sql-injection/before`) and run:
+To run any application go to correct directory (for example `./sql-injection/vulnerable`) and run:
 ```bash
 ./mvnw spring-boot:run
 ```
 
-This will start the Postgres dockesr container and start the application (default port: 8080).
-
-
+This will start the Postgres docker container and start the application (default port: 8080).
 
 
 # Docker 
