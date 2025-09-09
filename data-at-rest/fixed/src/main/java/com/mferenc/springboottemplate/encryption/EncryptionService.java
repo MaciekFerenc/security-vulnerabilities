@@ -1,6 +1,7 @@
 package com.mferenc.springboottemplate.encryption;
 
 import org.springframework.stereotype.Service;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -25,8 +26,11 @@ public class EncryptionService {
         var key = buildKey();
         byte[] iv = generateIV();
         Cipher cipher = createCipher(Cipher.ENCRYPT_MODE, key, iv);
-        byte[] encryptedData = cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(combineIvAndData(iv, encryptedData));
+        byte[] encryptedData =
+                cipher.doFinal(input.getBytes(StandardCharsets.UTF_8));
+        return Base64
+                .getEncoder()
+                .encodeToString(combineIvAndData(iv, encryptedData));
     }
 
     public String decrypt(String encrypted) throws Exception {
@@ -41,10 +45,9 @@ public class EncryptionService {
     }
 
     private SecretKeySpec buildKey() {
-        byte[] keyBytes = keyManager.getEncryptionKey().getBytes(StandardCharsets.UTF_8);
-        if (keyBytes.length != 16 && keyBytes.length != 24 && keyBytes.length != 32) {
-            throw new IllegalArgumentException("Invalid key length: " + keyBytes.length + " bytes");
-        }
+        byte[] keyBytes = keyManager
+                .getEncryptionKey()
+                .getBytes(StandardCharsets.UTF_8);
         return new SecretKeySpec(keyBytes, ALGORITHM);
     }
 
