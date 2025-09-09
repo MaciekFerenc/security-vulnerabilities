@@ -25,5 +25,5 @@ This will start the Postgres docker container and start the application (default
 
 You can also run demo applications as docker containers. Navigate to correct directory and run:
 ```bash
-docker-compose up --build
+docker compose up --build
 ```

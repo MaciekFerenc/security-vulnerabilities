@@ -25,3 +25,10 @@ or
 ```bash
 java -jar target/spring-boot-template-0.0.1-SNAPSHOT.jar
 ```
+
+
+# Run application as Docker container
+
+```bash
+docker compose up --build
+```
