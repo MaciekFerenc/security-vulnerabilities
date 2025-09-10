@@ -9,9 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
@@ -40,6 +46,7 @@ public class SpringBootTemplateApplication {
             createDefaultUsers();
             createSampleTicketData();
         }
+        addTestUsers();
     }
 
     private void createDefaultUsers() {
@@ -51,6 +58,40 @@ public class SpringBootTemplateApplication {
         userRepository.save(user2);
         userRepository.save(admin);
     }
+
+    private void addTestUsers() {
+        try {
+            ClassPathResource resource = new ClassPathResource("usernames.txt");
+            List<String> usernames = new ArrayList<>();
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    usernames.add(line);
+                }
+            }
+            System.out.println(usernames.size());
+
+            for (String username : usernames) {
+                username = username.trim();
+
+                if (username.isEmpty()) {
+                    continue;
+                }
+
+                if (username.startsWith("ex_")) {
+                    if (userRepository.findByUsername(username).isEmpty()) {
+                        User user = new User(username, passwordEncoder.encode("haslo"), username + "@test.com");
+                        userRepository.save(user);
+                    }
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private void createSampleTicketData() {
         if (userRepository.existsById(1L) && userRepository.existsById(2L)) {
